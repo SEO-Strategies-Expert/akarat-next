@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  robots: "index, follow",
+  robots: "index, follow",  // Enabled after P0-1 (lang/dir) and P0-2 (localization) verified
   title: "Akarat Istanbul",
   description: "Real estate platform in Istanbul",
   metadataBase: new URL("https://akarat-next.vercel.app"),
