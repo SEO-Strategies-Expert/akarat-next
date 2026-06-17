@@ -4,6 +4,48 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import PropertyCard from '@/components/PropertyCard';
 import FilterPanel from '@/components/FilterPanel';
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+
+  try {
+    // Try to fetch property details for metadata
+    const property = await api.getPropertyDetails(slug).catch(() => null);
+
+    if (property) {
+      const priceFormatter = new Intl.NumberFormat(locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US', {
+        style: 'currency',
+        currency: 'USD',
+      });
+
+      return {
+        title: `${property.name} - عقارات إسطنبول | Akarat Istanbul`,
+        description: `${property.name} في ${property.location} - ${priceFormatter.format(property.price)}. ${property.description?.slice(0, 100) || ''}`,
+      };
+    }
+
+    // Fallback for category pages
+    const categories = await api.getCategories();
+    const category = categories.find((c) => c.slug === slug);
+
+    if (category) {
+      return {
+        title: `${category.name} - عقارات إسطنبول | Akarat Istanbul`,
+        description: category.short || `تصفح جميع ${category.name} المتاحة في إسطنبول`,
+      };
+    }
+
+    // Default metadata
+    return {
+      title: `${slug} - عقارات إسطنبول | Akarat Istanbul`,
+    };
+  } catch (error) {
+    return {
+      title: `${slug} - عقارات إسطنبول | Akarat Istanbul`,
+    };
+  }
+}
 
 const labels: Record<string, Record<string, string>> = {
   ar: {

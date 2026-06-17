@@ -1,3 +1,24 @@
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const titles = {
+    ar: 'المدونة - عقارات إسطنبول',
+    en: 'Blog - Akarat Istanbul',
+    ru: 'Блог - Акарат Стамбул',
+  };
+  const descriptions = {
+    ar: 'اقرأ أحدث المقالات والنصائح العقارية',
+    en: 'Read the latest articles and real estate tips',
+    ru: 'Прочитайте последние статьи и советы по недвижимости',
+  };
+
+  return {
+    title: titles[locale as keyof typeof titles] || titles.en,
+    description: descriptions[locale as keyof typeof descriptions] || descriptions.en,
+  };
+}
+
 export default async function BlogsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const isRtl = locale === 'ar';

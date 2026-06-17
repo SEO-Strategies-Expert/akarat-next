@@ -1,3 +1,24 @@
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const titles = {
+    ar: 'من نحن - عقارات إسطنبول',
+    en: 'About Us - Akarat Istanbul',
+    ru: 'О нас - Акарат Стамбул',
+  };
+  const descriptions = {
+    ar: 'تعرف على منصة عقارات إسطنبول الرائدة وخدماتها الشاملة',
+    en: 'Learn about Akarat Istanbul, a leading real estate platform with comprehensive services',
+    ru: 'Узнайте о платформе Akarat Istanbul и её комплексных услугах недвижимости',
+  };
+
+  return {
+    title: titles[locale as keyof typeof titles] || titles.en,
+    description: descriptions[locale as keyof typeof descriptions] || descriptions.en,
+  };
+}
+
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const isRtl = locale === 'ar';

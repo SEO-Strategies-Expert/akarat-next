@@ -2,12 +2,32 @@ import { api } from '@/lib/api';
 import PropertyCard from '@/components/PropertyCard';
 import FilterPanel from '@/components/FilterPanel';
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 
 const labels: Record<string, Record<string, string>> = {
   ar: { properties: 'العقارات', noResults: 'لم يتم العثور على عقارات', loading: 'جاري التحميل...' },
   en: { properties: 'Properties', noResults: 'No properties found', loading: 'Loading...' },
   ru: { properties: 'Недвижимость', noResults: 'Объекты не найдены', loading: 'Загрузка...' },
 };
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const titles = {
+    ar: 'العقارات - عقارات إسطنبول',
+    en: 'Properties - Akarat Istanbul',
+    ru: 'Недвижимость - Акарат Стамбул',
+  };
+  const descriptions = {
+    ar: 'اكتشف أفضل العقارات في إسطنبول مع خيارات متنوعة من الشقق والفلل والمزيد',
+    en: 'Discover the best properties in Istanbul with diverse options including apartments, villas, and more',
+    ru: 'Откройте лучшую недвижимость в Стамбуле с разнообразными вариантами квартир, вилл и многого другого',
+  };
+
+  return {
+    title: titles[locale as keyof typeof titles] || titles.en,
+    description: descriptions[locale as keyof typeof descriptions] || descriptions.en,
+  };
+}
 
 export default async function PropertiesPage({
   params,
