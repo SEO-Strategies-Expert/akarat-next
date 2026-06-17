@@ -32,7 +32,7 @@ export default function CategoryCard({ category, locale }: CategoryCardProps) {
           )}
         </div>
         <div className="p-4">
-          <h3 className="font-bold text-gray-800 mb-1">{tTypes(category.slug)}</h3>
+          <h3 className="font-bold text-gray-800 mb-1">{tTypes('apartments')} / {tTypes(category.slug)}</h3>
           <p className="text-xs text-gray-600 line-clamp-2">{category.short}</p>
           <p className="text-sm text-blue-600 font-semibold mt-2">
             {category.properties_count} {tCommon('properties')}
