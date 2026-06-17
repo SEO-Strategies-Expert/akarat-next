@@ -1,6 +1,8 @@
+import type { Metadata } from 'next';
 import { api } from '@/lib/api';
 import PropertyCard from '@/components/PropertyCard';
 import CategoryCard from '@/components/CategoryCard';
+import { siteConfig, organizationSchema } from '@/lib/seo';
 import Link from 'next/link';
 
 const labels: Record<string, Record<string, string>> = {
@@ -27,6 +29,42 @@ const labels: Record<string, Record<string, string>> = {
   },
 };
 
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+
+  const titles: Record<string, string> = {
+    ar: 'عقارات اسطنبول - الرئيسية',
+    en: 'Akarat Istanbul - Home',
+    ru: 'Акарат Стамбул - Главная',
+  };
+
+  const descriptions: Record<string, string> = {
+    ar: 'منصة عقارات رائدة في اسطنبول توفر شقق وفلل وعقارات تجارية بأفضل الأسعار',
+    en: 'Leading real estate platform in Istanbul offering apartments, villas, and commercial properties at best prices',
+    ru: 'Ведущая платформа недвижимости в Стамбуле, предлагающая квартиры, виллы и коммерческую недвижимость по лучшим ценам',
+  };
+
+  return {
+    title: titles[locale] || titles.en,
+    description: descriptions[locale] || descriptions.en,
+    openGraph: {
+      title: titles[locale] || titles.en,
+      description: descriptions[locale] || descriptions.en,
+      url: locale === 'ar' ? siteConfig.url : `${siteConfig.url}/${locale}`,
+      type: 'website',
+    },
+    alternates: {
+      canonical: locale === 'ar' ? siteConfig.url : `${siteConfig.url}/${locale}`,
+      languages: {
+        ar: `${siteConfig.url}/`,
+        en: `${siteConfig.url}/en`,
+        ru: `${siteConfig.url}/ru`,
+        'x-default': siteConfig.url,
+      },
+    },
+  };
+}
+
 export default async function HomePage({
   params,
 }: {
@@ -46,6 +84,13 @@ export default async function HomePage({
 
     return (
       <div className={`${isRtl ? 'rtl' : 'ltr'}`} dir={isRtl ? 'rtl' : 'ltr'}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema()),
+          }}
+        />
+
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
           <div className="max-w-7xl mx-auto text-center">
