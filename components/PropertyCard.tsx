@@ -33,9 +33,13 @@ export default function PropertyCard({ property, locale }: PropertyCardProps) {
       'إطلالة بحرية': 'sea_view',
     };
     const statusKey = statusMap[statusName] || statusName.toLowerCase().replace(/\s+/g, '_');
+    console.log(`[PropertyCard] statusName="${statusName}", statusKey="${statusKey}", messageKey="statusTags.${statusKey}"`);
     try {
-      return t(`statusTags.${statusKey}`);
-    } catch {
+      const translated = t(`statusTags.${statusKey}`);
+      console.log(`[PropertyCard] status translation result: "${translated}"`);
+      return translated;
+    } catch (error) {
+      console.error(`[PropertyCard] status translation failed for "${statusName}" -> "${statusKey}"`, error);
       return statusName;
     }
   };

@@ -17,9 +17,13 @@ export default function CategoryCard({ category, locale }: CategoryCardProps) {
 
   // Get translated category name from message files using slug as key
   const getTranslatedCategoryName = (slug: string) => {
+    console.log(`[CategoryCard] slug="${slug}", category.name="${category.name}", messageKey="propertyTypes.${slug}"`);
     try {
-      return t(`propertyTypes.${slug}`);
-    } catch {
+      const translated = t(`propertyTypes.${slug}`);
+      console.log(`[CategoryCard] translation result: "${translated}"`);
+      return translated;
+    } catch (error) {
+      console.error(`[CategoryCard] translation failed for slug="${slug}", falling back to name="${category.name}"`, error);
       return category.name;
     }
   };
