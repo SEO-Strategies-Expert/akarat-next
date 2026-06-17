@@ -13,7 +13,6 @@ interface PropertyCardProps {
 export default function PropertyCard({ property, locale }: PropertyCardProps) {
   const t = useTranslations();
   const isRtl = locale === 'ar';
-  console.log(`[PropertyCard] locale prop="${locale}", isRtl=${isRtl}`);
   const href = locale === 'ar' ? `/properties/${property.slug}` : `/${locale}/properties/${property.slug}`;
 
   const priceFormatter = new Intl.NumberFormat(locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US', {
@@ -22,7 +21,7 @@ export default function PropertyCard({ property, locale }: PropertyCardProps) {
     minimumFractionDigits: 0,
   });
 
-  // Translate status tag from API slug (e.g., "ready" → "Ready" in English)
+  // Translate status tag from API (e.g., "جاهزة" → "Ready" in English)
   const getTranslatedStatus = (statusName: string | undefined) => {
     if (!statusName) return null;
     const statusMap: { [key: string]: string } = {
@@ -34,10 +33,7 @@ export default function PropertyCard({ property, locale }: PropertyCardProps) {
       'إطلالة بحرية': 'sea_view',
     };
     const statusKey = statusMap[statusName] || statusName.toLowerCase().replace(/\s+/g, '_');
-    console.log(`[PropertyCard] statusName="${statusName}", statusKey="${statusKey}", messageKey="statusTags.${statusKey}"`);
-    const translated = t(`statusTags.${statusKey}`);
-    console.log(`[PropertyCard] status translation result: "${translated}"`);
-    return translated;
+    return t(`statusTags.${statusKey}`);
   };
 
   return (
