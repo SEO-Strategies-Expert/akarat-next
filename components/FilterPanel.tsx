@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'next';
+import { useCallback, useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { City, Category } from '@/lib/types';
 
