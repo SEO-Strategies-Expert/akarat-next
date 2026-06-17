@@ -12,6 +12,7 @@ interface PropertyCardProps {
 
 export default function PropertyCard({ property, locale }: PropertyCardProps) {
   const tStatus = useTranslations('statusTags');
+  const tCommon = useTranslations('common');
   const contextLocale = useLocale();
   console.log(`[PropertyCard] contextLocale="${contextLocale}", locale prop="${locale}"`);
   const isRtl = locale === 'ar';

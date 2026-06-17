@@ -11,7 +11,8 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ category, locale }: CategoryCardProps) {
-  const t = useTranslations('propertyTypes');
+  const tTypes = useTranslations('propertyTypes');
+  const tCommon = useTranslations('common');
   const contextLocale = useLocale();
   console.log(`[CategoryCard] contextLocale="${contextLocale}", locale prop="${locale}"`);
   const isRtl = locale === 'ar';
@@ -31,10 +32,10 @@ export default function CategoryCard({ category, locale }: CategoryCardProps) {
           )}
         </div>
         <div className="p-4">
-          <h3 className="font-bold text-gray-800 mb-1">{t(category.slug)}</h3>
+          <h3 className="font-bold text-gray-800 mb-1">{tTypes(category.slug)}</h3>
           <p className="text-xs text-gray-600 line-clamp-2">{category.short}</p>
           <p className="text-sm text-blue-600 font-semibold mt-2">
-            {category.properties_count} {t('common.properties')}
+            {category.properties_count} {tCommon('properties')}
           </p>
         </div>
       </div>
