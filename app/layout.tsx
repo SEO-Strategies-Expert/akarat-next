@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,26 +17,14 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale?: string }>;
 }>) {
-  // Get locale from route params
-  let locale = "ar"; // default
-
-  try {
-    const resolvedParams = await params;
-    if (resolvedParams?.locale) {
-      locale = resolvedParams.locale;
-    }
-  } catch (e) {
-    // Fallback to default
-    locale = "ar";
-  }
-
+  // Read locale from middleware header
+  const headerList = headers();
+  const locale = headerList.get("x-locale") || "ar";
   const isRtl = locale === "ar";
 
   return (
