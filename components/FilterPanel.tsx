@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { City, Category } from '@/lib/types';
 
 interface FilterPanelProps {
@@ -14,7 +15,16 @@ export default function FilterPanel({ cities, categories, locale }: FilterPanelP
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations();
   const isRtl = locale === 'ar';
+
+  const getTranslatedCategoryName = (slug: string) => {
+    try {
+      return t(`propertyTypes.${slug}`);
+    } catch {
+      return slug;
+    }
+  };
 
   const [city, setCity] = useState(searchParams.get('city') || '');
   const [category, setCategory] = useState(searchParams.get('category') || '');
@@ -85,7 +95,7 @@ export default function FilterPanel({ cities, categories, locale }: FilterPanelP
             </option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.slug}>
-                {cat.name}
+                {getTranslatedCategoryName(cat.slug)}
               </option>
             ))}
           </select>
