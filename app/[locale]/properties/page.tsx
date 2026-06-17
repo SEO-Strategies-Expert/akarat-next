@@ -23,9 +23,23 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     ru: 'Откройте лучшую недвижимость в Стамбуле с разнообразными вариантами квартир, вилл и многого другого',
   };
 
+  const title = titles[locale as keyof typeof titles] || titles.en;
+  const description = descriptions[locale as keyof typeof descriptions] || descriptions.en;
+  const canonicalUrl = `/${locale}/properties`;
+
   return {
-    title: titles[locale as keyof typeof titles] || titles.en,
-    description: descriptions[locale as keyof typeof descriptions] || descriptions.en,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      type: 'website',
+      locale: locale === 'ar' ? 'ar_SA' : locale === 'ru' ? 'ru_RU' : 'en_US',
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
   };
 }
 

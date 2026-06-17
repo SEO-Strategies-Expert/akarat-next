@@ -17,6 +17,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   const siteName = siteNames[locale as keyof typeof siteNames] || siteNames.en;
 
+  const canonicalUrl = locale === 'ar' ? `/properties/${slug}` : `/${locale}/properties/${slug}`;
+
   try {
     // Try to fetch property details for metadata
     const property = await api.getPropertyDetails(slug).catch(() => null);
@@ -28,10 +30,23 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       });
 
       const locationText = locale === 'ar' ? `في ${property.location}` : locale === 'ru' ? `в ${property.location}` : `in ${property.location}`;
+      const title = `${property.name} - ${siteName}`;
+      const description = `${property.name} ${locationText} - ${priceFormatter.format(property.price)}`;
 
       return {
-        title: `${property.name} - ${siteName}`,
-        description: `${property.name} ${locationText} - ${priceFormatter.format(property.price)}`,
+        title,
+        description,
+        openGraph: {
+          title,
+          description,
+          url: canonicalUrl,
+          type: 'website',
+          locale: locale === 'ar' ? 'ar_SA' : locale === 'ru' ? 'ru_RU' : 'en_US',
+          images: property.image ? [{ url: property.image, width: 1200, height: 630 }] : undefined,
+        },
+        alternates: {
+          canonical: canonicalUrl,
+        },
       };
     }
 
@@ -40,19 +55,39 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     const category = categories.find((c) => c.slug === slug);
 
     if (category) {
+      const title = `${category.name} - ${siteName}`;
+      const description = category.short || (locale === 'ar' ? `تصفح جميع ${category.name}` : locale === 'ru' ? `Просмотрите все ${category.name}` : `Browse all ${category.name}`);
+
       return {
-        title: `${category.name} - ${siteName}`,
-        description: category.short || (locale === 'ar' ? `تصفح جميع ${category.name}` : locale === 'ru' ? `Просмотрите все ${category.name}` : `Browse all ${category.name}`),
+        title,
+        description,
+        openGraph: {
+          title,
+          description,
+          url: canonicalUrl,
+          type: 'website',
+          locale: locale === 'ar' ? 'ar_SA' : locale === 'ru' ? 'ru_RU' : 'en_US',
+          images: category.icon ? [{ url: category.icon, width: 1200, height: 630 }] : undefined,
+        },
+        alternates: {
+          canonical: canonicalUrl,
+        },
       };
     }
 
     // Default metadata
     return {
       title: `${slug} - ${siteName}`,
+      alternates: {
+        canonical: canonicalUrl,
+      },
     };
   } catch (error) {
     return {
       title: `${slug} - ${siteName}`,
+      alternates: {
+        canonical: canonicalUrl,
+      },
     };
   }
 }
