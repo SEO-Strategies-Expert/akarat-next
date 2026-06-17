@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -48,6 +48,7 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  setRequestLocale(locale);
   const messages = await getMessages();
   const isRtl = RTL.includes(locale as Locale);
   const dir = isRtl ? "rtl" : "ltr";
@@ -61,7 +62,7 @@ export default async function LocaleLayout({
     >
       <head />
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <Header locale={locale} />
           <main className="flex-grow">{children}</main>
           <Footer locale={locale} />
