@@ -1,31 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
-import createIntlMiddleware from 'next-intl/middleware';
+import { NextRequest, NextResponse } from "next/server";
+import createIntlMiddleware from "next-intl/middleware";
 
 const handleI18nRouting = createIntlMiddleware({
-  locales: ['ar', 'en', 'ru'],
-  defaultLocale: 'ar',
-  localePrefix: 'as-needed',
+  locales: ["ar", "en", "ru"],
+  defaultLocale: "ar",
+  localePrefix: "as-needed",
 });
 
 export default function middleware(request: NextRequest) {
   const response = handleI18nRouting(request);
 
-  // Detect locale from pathname and set header
+  // Set x-pathname header so root layout can detect locale
   const pathname = request.nextUrl.pathname;
-  let locale = 'ar';
-
-  if (pathname.startsWith('/en')) {
-    locale = 'en';
-  } else if (pathname.startsWith('/ru')) {
-    locale = 'ru';
-  }
-
-  // Set header for root layout to read
-  response.headers.set('x-locale', locale);
+  response.headers.set("x-pathname", pathname);
 
   return response;
 }
 
 export const config = {
-  matcher: ['/', '/(en|ru)/:path*'],
+  matcher: ["/", "/(en|ru)/:path*"],
 };

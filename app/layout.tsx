@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { getLocale } from "next-intl/server";
+import { headers } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,12 +19,23 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
+  // Extract locale from URL path (middleware should have set this in a header)
+  // Fallback: check pathname from headers
+  const headersList = headers();
+  const pathname = headersList.get("x-pathname") || "/";
+
+  let locale = "ar"; // default
+  if (pathname.startsWith("/en")) {
+    locale = "en";
+  } else if (pathname.startsWith("/ru")) {
+    locale = "ru";
+  }
+
   const isRtl = RTL.includes(locale);
 
   return (
