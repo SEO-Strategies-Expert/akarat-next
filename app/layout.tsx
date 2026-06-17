@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,17 +22,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headerList = headers();
-  const pathname = headerList.get("x-pathname") || "/";
-
-  // Detect locale from pathname: /en, /ru are English/Russian, otherwise Arabic
-  let locale = "ar";
-  if (pathname.startsWith("/en")) {
-    locale = "en";
-  } else if (pathname.startsWith("/ru")) {
-    locale = "ru";
-  }
-
+  const cookieStore = cookies();
+  const locale = cookieStore.get("NEXT_LOCALE_DETECTED")?.value || "ar";
   const isRtl = locale === "ar";
 
   return (
