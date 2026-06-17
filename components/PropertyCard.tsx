@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Property } from '@/lib/types';
 
 interface PropertyCardProps {
@@ -11,7 +11,9 @@ interface PropertyCardProps {
 }
 
 export default function PropertyCard({ property, locale }: PropertyCardProps) {
-  const t = useTranslations();
+  const tStatus = useTranslations('statusTags');
+  const contextLocale = useLocale();
+  console.log(`[PropertyCard] contextLocale="${contextLocale}", locale prop="${locale}"`);
   const isRtl = locale === 'ar';
   const href = locale === 'ar' ? `/properties/${property.slug}` : `/${locale}/properties/${property.slug}`;
 
@@ -33,7 +35,7 @@ export default function PropertyCard({ property, locale }: PropertyCardProps) {
       'إطلالة بحرية': 'sea_view',
     };
     const statusKey = statusMap[statusName] || statusName.toLowerCase().replace(/\s+/g, '_');
-    return t(`statusTags.${statusKey}`);
+    return tStatus(statusKey);
   };
 
   return (

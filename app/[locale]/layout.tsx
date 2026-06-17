@@ -31,7 +31,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   return {
-    robots: "index, follow",
+    robots: "noindex, follow",  // Temporarily disabled until P0-2 (enum translation) is confirmed working on live DOM
   };
 }
 

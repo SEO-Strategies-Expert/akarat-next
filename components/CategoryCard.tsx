@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Category } from '@/lib/types';
 
 interface CategoryCardProps {
@@ -11,14 +11,11 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ category, locale }: CategoryCardProps) {
-  const t = useTranslations();
+  const t = useTranslations('propertyTypes');
+  const contextLocale = useLocale();
+  console.log(`[CategoryCard] contextLocale="${contextLocale}", locale prop="${locale}"`);
   const isRtl = locale === 'ar';
   const href = locale === 'ar' ? `/properties/${category.slug}` : `/${locale}/properties/${category.slug}`;
-
-  // Get translated category name from message files using slug as key
-  const getTranslatedCategoryName = (slug: string) => {
-    return t(`propertyTypes.${slug}`);
-  };
 
   return (
     <Link href={href}>
@@ -34,7 +31,7 @@ export default function CategoryCard({ category, locale }: CategoryCardProps) {
           )}
         </div>
         <div className="p-4">
-          <h3 className="font-bold text-gray-800 mb-1">{getTranslatedCategoryName(category.slug)}</h3>
+          <h3 className="font-bold text-gray-800 mb-1">{t(category.slug)}</h3>
           <p className="text-xs text-gray-600 line-clamp-2">{category.short}</p>
           <p className="text-sm text-blue-600 font-semibold mt-2">
             {category.properties_count} {t('common.properties')}
