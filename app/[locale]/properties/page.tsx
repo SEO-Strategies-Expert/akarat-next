@@ -55,7 +55,18 @@ export default async function PropertiesPage({
       api.getCategories(),
     ]);
 
-    const properties = propertiesData.properties.data || [];
+    let properties = propertiesData.properties.data || [];
+
+    // Client-side filtering for price range (API doesn't respect max_price)
+    const minPrice = search.min_price ? Number(search.min_price) : null;
+    const maxPrice = search.max_price ? Number(search.max_price) : null;
+    if (minPrice !== null || maxPrice !== null) {
+      properties = properties.filter((prop) => {
+        if (minPrice !== null && prop.price < minPrice) return false;
+        if (maxPrice !== null && prop.price > maxPrice) return false;
+        return true;
+      });
+    }
 
     return (
       <div className={`${isRtl ? 'rtl' : 'ltr'}`} dir={isRtl ? 'rtl' : 'ltr'}>
