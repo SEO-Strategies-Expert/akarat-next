@@ -13,6 +13,7 @@ interface PropertyCardProps {
 export default function PropertyCard({ property, locale }: PropertyCardProps) {
   const t = useTranslations();
   const isRtl = locale === 'ar';
+  console.log(`[PropertyCard] locale prop="${locale}", isRtl=${isRtl}`);
   const href = locale === 'ar' ? `/properties/${property.slug}` : `/${locale}/properties/${property.slug}`;
 
   const priceFormatter = new Intl.NumberFormat(locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US', {
@@ -34,14 +35,9 @@ export default function PropertyCard({ property, locale }: PropertyCardProps) {
     };
     const statusKey = statusMap[statusName] || statusName.toLowerCase().replace(/\s+/g, '_');
     console.log(`[PropertyCard] statusName="${statusName}", statusKey="${statusKey}", messageKey="statusTags.${statusKey}"`);
-    try {
-      const translated = t(`statusTags.${statusKey}`);
-      console.log(`[PropertyCard] status translation result: "${translated}"`);
-      return translated;
-    } catch (error) {
-      console.error(`[PropertyCard] status translation failed for "${statusName}" -> "${statusKey}"`, error);
-      return statusName;
-    }
+    const translated = t(`statusTags.${statusKey}`);
+    console.log(`[PropertyCard] status translation result: "${translated}"`);
+    return translated;
   };
 
   return (

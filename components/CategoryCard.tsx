@@ -13,19 +13,15 @@ interface CategoryCardProps {
 export default function CategoryCard({ category, locale }: CategoryCardProps) {
   const t = useTranslations();
   const isRtl = locale === 'ar';
+  console.log(`[CategoryCard] locale prop="${locale}", isRtl=${isRtl}`);
   const href = locale === 'ar' ? `/properties/${category.slug}` : `/${locale}/properties/${category.slug}`;
 
   // Get translated category name from message files using slug as key
   const getTranslatedCategoryName = (slug: string) => {
-    console.log(`[CategoryCard] slug="${slug}", category.name="${category.name}", messageKey="propertyTypes.${slug}"`);
-    try {
-      const translated = t(`propertyTypes.${slug}`);
-      console.log(`[CategoryCard] translation result: "${translated}"`);
-      return translated;
-    } catch (error) {
-      console.error(`[CategoryCard] translation failed for slug="${slug}", falling back to name="${category.name}"`, error);
-      return category.name;
-    }
+    console.log(`[CategoryCard] slug="${slug}", messageKey="propertyTypes.${slug}"`);
+    const translated = t(`propertyTypes.${slug}`);
+    console.log(`[CategoryCard] translation result: "${translated}"`);
+    return translated;
   };
 
   return (
