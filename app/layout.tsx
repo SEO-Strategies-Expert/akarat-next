@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { getLocale, getMessages } from 'next-intl/server';
-import { NextIntlClientProvider } from 'next-intl';
+import { headers } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,27 +17,32 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
-  const messages = await getMessages();
-  const isRtl = locale === 'ar';
+  const headerList = headers();
+  const pathname = headerList.get("x-pathname") || "/";
+
+  // Detect locale from pathname: /en, /ru are English/Russian, otherwise Arabic
+  let locale = "ar";
+  if (pathname.startsWith("/en")) {
+    locale = "en";
+  } else if (pathname.startsWith("/ru")) {
+    locale = "ru";
+  }
+
+  const isRtl = locale === "ar";
 
   return (
     <html
       lang={locale}
-      dir={isRtl ? 'rtl' : 'ltr'}
+      dir={isRtl ? "rtl" : "ltr"}
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
