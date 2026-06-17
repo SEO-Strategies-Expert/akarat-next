@@ -15,5 +15,26 @@
     "ar": "العربية",
     "en": "English",
     "ru": "Русский"
+  },
+  "propertyTypes": {
+    "apartments": "الشقق",
+    "villas": "الفلل",
+    "farms": "المزارع",
+    "offices": "المكاتب",
+    "shops": "المحلات التجارية",
+    "hotel-residences": "الشقق الفندقية",
+    "pent-houses": "البنتهاوس"
+  },
+  "statusTags": {
+    "ready": "جاهزة",
+    "under_construction": "قيد الانشاء",
+    "cheap": "رخيصة",
+    "luxury": "فاخرة",
+    "installment": "بالتقسيط",
+    "sea_view": "إطلالة بحرية"
+  },
+  "common": {
+    "properties": "عقار",
+    "property": "عقار"
   }
 }

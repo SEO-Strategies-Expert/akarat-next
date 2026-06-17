@@ -15,5 +15,26 @@
     "ar": "العربية",
     "en": "English",
     "ru": "Русский"
+  },
+  "propertyTypes": {
+    "apartments": "Apartments",
+    "villas": "Villas",
+    "farms": "Farms",
+    "offices": "Offices",
+    "shops": "Shops",
+    "hotel-residences": "Hotel Residences",
+    "pent-houses": "Penthouses"
+  },
+  "statusTags": {
+    "ready": "Ready",
+    "under_construction": "Under Construction",
+    "cheap": "Affordable",
+    "luxury": "Luxury",
+    "installment": "Installments",
+    "sea_view": "Sea View"
+  },
+  "common": {
+    "properties": "properties",
+    "property": "property"
   }
 }

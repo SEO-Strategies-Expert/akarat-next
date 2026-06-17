@@ -15,5 +15,26 @@
     "ar": "العربية",
     "en": "English",
     "ru": "Русский"
+  },
+  "propertyTypes": {
+    "apartments": "Квартиры",
+    "villas": "Виллы",
+    "farms": "Фермы",
+    "offices": "Офисы",
+    "shops": "Магазины",
+    "hotel-residences": "Апартаменты отеля",
+    "pent-houses": "Пентхаусы"
+  },
+  "statusTags": {
+    "ready": "Готово",
+    "under_construction": "Строится",
+    "cheap": "Доступно",
+    "luxury": "Люкс",
+    "installment": "Рассрочка",
+    "sea_view": "Вид на море"
+  },
+  "common": {
+    "properties": "объектов",
+    "property": "объект"
   }
 }
