@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import LocaleHydrator from "@/components/LocaleHydrator";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,22 +16,36 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale?: string }>;
 }>) {
+  // Get locale from route params
+  let locale = "ar"; // default
+
+  try {
+    const resolvedParams = await params;
+    if (resolvedParams?.locale) {
+      locale = resolvedParams.locale;
+    }
+  } catch (e) {
+    // Fallback to default
+    locale = "ar";
+  }
+
+  const isRtl = locale === "ar";
+
   return (
     <html
-      lang="en"
-      dir="ltr"
+      lang={locale}
+      dir={isRtl ? "rtl" : "ltr"}
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <LocaleHydrator />
-        {children}
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
