@@ -1,0 +1,19 @@
+{
+  "header": {
+    "home": "Home",
+    "properties": "Properties",
+    "offers": "Offers",
+    "blogs": "Blog",
+    "about": "About Us",
+    "contact": "Contact Us"
+  },
+  "footer": {
+    "copyright": "All rights reserved © 2024 Akarat Istanbul",
+    "followUs": "Follow Us"
+  },
+  "langSwitcher": {
+    "ar": "العربية",
+    "en": "English",
+    "ru": "Русский"
+  }
+}

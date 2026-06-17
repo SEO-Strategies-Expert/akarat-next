@@ -1,0 +1,19 @@
+{
+  "header": {
+    "home": "Главная",
+    "properties": "Недвижимость",
+    "offers": "Предложения",
+    "blogs": "Блог",
+    "about": "О нас",
+    "contact": "Контакты"
+  },
+  "footer": {
+    "copyright": "Все права защищены © 2024 Akarat Istanbul",
+    "followUs": "Следите за нами"
+  },
+  "langSwitcher": {
+    "ar": "العربية",
+    "en": "English",
+    "ru": "Русский"
+  }
+}

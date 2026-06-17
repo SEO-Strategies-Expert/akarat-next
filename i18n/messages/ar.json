@@ -1,0 +1,19 @@
+{
+  "header": {
+    "home": "الرئيسية",
+    "properties": "العقارات",
+    "offers": "العروض",
+    "blogs": "المدونة",
+    "about": "من نحن",
+    "contact": "تواصل معنا"
+  },
+  "footer": {
+    "copyright": "جميع الحقوق محفوظة © 2024 عقارات اسطنبول",
+    "followUs": "تابعنا"
+  },
+  "langSwitcher": {
+    "ar": "العربية",
+    "en": "English",
+    "ru": "Русский"
+  }
+}
