@@ -37,12 +37,12 @@ export default async function HomePage({
   const t = labels[locale as keyof typeof labels] || labels.en;
 
   try {
-    const [properties, categories] = await Promise.all([
+    const [propertiesData, categories] = await Promise.all([
       api.getProperties({ limit: 6 }),
       api.getCategories(),
     ]);
 
-    const featured = properties.data?.slice(0, 6) || [];
+    const featured = propertiesData.properties.data?.slice(0, 6) || [];
 
     return (
       <div className={`${isRtl ? 'rtl' : 'ltr'}`} dir={isRtl ? 'rtl' : 'ltr'}>
