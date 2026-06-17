@@ -63,7 +63,7 @@ export default function FilterPanel({ cities, categories, locale }: FilterPanelP
               {locale === 'ar' ? 'جميع المدن' : locale === 'en' ? 'All Cities' : 'Все города'}
             </option>
             {cities.map((c) => (
-              <option key={c.id} value={c.name}>
+              <option key={c.id} value={String(c.id)}>
                 {c.name}
               </option>
             ))}
