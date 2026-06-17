@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  robots: "noindex, nofollow",
+  robots: "index, follow",
 };
 
 export default async function RootLayout({
@@ -21,12 +21,17 @@ export default async function RootLayout({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params?: Promise<{ locale?: string }>;
+  params: Promise<{ locale?: string }>;
 }>) {
   let locale = 'ar';
+
   if (params) {
-    const resolvedParams = await params;
-    locale = resolvedParams.locale || 'ar';
+    try {
+      const resolvedParams = await params;
+      locale = resolvedParams.locale || 'ar';
+    } catch (e) {
+      locale = 'ar';
+    }
   }
 
   const isRtl = locale === 'ar';

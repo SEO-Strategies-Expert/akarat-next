@@ -9,6 +9,14 @@ import type { Metadata } from 'next';
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
 
+  const siteNames = {
+    ar: 'عقارات إسطنبول',
+    en: 'Akarat Istanbul',
+    ru: 'Акарат Стамбул',
+  };
+
+  const siteName = siteNames[locale as keyof typeof siteNames] || siteNames.en;
+
   try {
     // Try to fetch property details for metadata
     const property = await api.getPropertyDetails(slug).catch(() => null);
@@ -19,9 +27,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         currency: 'USD',
       });
 
+      const locationText = locale === 'ar' ? `في ${property.location}` : locale === 'ru' ? `в ${property.location}` : `in ${property.location}`;
+
       return {
-        title: `${property.name} - عقارات إسطنبول | Akarat Istanbul`,
-        description: `${property.name} في ${property.location} - ${priceFormatter.format(property.price)}. ${property.description?.slice(0, 100) || ''}`,
+        title: `${property.name} - ${siteName}`,
+        description: `${property.name} ${locationText} - ${priceFormatter.format(property.price)}`,
       };
     }
 
@@ -31,18 +41,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
     if (category) {
       return {
-        title: `${category.name} - عقارات إسطنبول | Akarat Istanbul`,
-        description: category.short || `تصفح جميع ${category.name} المتاحة في إسطنبول`,
+        title: `${category.name} - ${siteName}`,
+        description: category.short || (locale === 'ar' ? `تصفح جميع ${category.name}` : locale === 'ru' ? `Просмотрите все ${category.name}` : `Browse all ${category.name}`),
       };
     }
 
     // Default metadata
     return {
-      title: `${slug} - عقارات إسطنبول | Akarat Istanbul`,
+      title: `${slug} - ${siteName}`,
     };
   } catch (error) {
     return {
-      title: `${slug} - عقارات إسطنبول | Akarat Istanbul`,
+      title: `${slug} - ${siteName}`,
     };
   }
 }
@@ -58,6 +68,8 @@ const labels: Record<string, Record<string, string>> = {
     contact: 'تواصل معنا',
     back: 'العودة',
     properties: 'العقارات',
+    showing: 'عرض',
+    property: 'عقار',
   },
   en: {
     price: 'Price',
@@ -68,6 +80,8 @@ const labels: Record<string, Record<string, string>> = {
     details: 'Details',
     contact: 'Contact Us',
     back: 'Back',
+    showing: 'Showing',
+    property: 'properties',
   },
   ru: {
     price: 'Цена',
@@ -78,6 +92,8 @@ const labels: Record<string, Record<string, string>> = {
     details: 'Детали',
     contact: 'Связаться с нами',
     back: 'Назад',
+    showing: 'Показано',
+    property: 'объектов',
   },
 };
 
@@ -226,12 +242,7 @@ export default async function PropertyPage({
           <div className="max-w-7xl mx-auto">
             <h1 className="text-4xl font-bold mb-2">{category?.name || slug}</h1>
             <p className="opacity-90">
-              {category?.short ||
-                (locale === 'ar'
-                  ? `عرض ${properties.length} عقار`
-                  : locale === 'en'
-                    ? `Showing ${properties.length} properties`
-                    : `Показано ${properties.length} объектов`)}
+              {category?.short || `${t.showing} ${properties.length} ${t.property}`}
             </p>
           </div>
         </section>

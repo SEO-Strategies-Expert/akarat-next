@@ -5,9 +5,9 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
 const labels: Record<string, Record<string, string>> = {
-  ar: { properties: 'العقارات', noResults: 'لم يتم العثور على عقارات', loading: 'جاري التحميل...' },
-  en: { properties: 'Properties', noResults: 'No properties found', loading: 'Loading...' },
-  ru: { properties: 'Недвижимость', noResults: 'Объекты не найдены', loading: 'Загрузка...' },
+  ar: { properties: 'العقارات', noResults: 'لم يتم العثور على عقارات', loading: 'جاري التحميل...', showing: 'عرض', property: 'عقار' },
+  en: { properties: 'Properties', noResults: 'No properties found', loading: 'Loading...', showing: 'Showing', property: 'properties' },
+  ru: { properties: 'Недвижимость', noResults: 'Объекты не найдены', loading: 'Загрузка...', showing: 'Показано', property: 'объектов' },
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -64,11 +64,7 @@ export default async function PropertiesPage({
           <div className="max-w-7xl mx-auto">
             <h1 className="text-4xl font-bold mb-2">{t.properties}</h1>
             <p className="opacity-90">
-              {locale === 'ar'
-                ? `عرض ${properties.length} عقار`
-                : locale === 'en'
-                  ? `Showing ${properties.length} properties`
-                  : `Показано ${properties.length} объектов`}
+              {t.showing} {properties.length} {t.property}
             </p>
           </div>
         </section>

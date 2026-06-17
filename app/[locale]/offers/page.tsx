@@ -1,4 +1,3 @@
-import { api } from '@/lib/api';
 import type { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -24,39 +23,35 @@ export default async function OffersPage({ params }: { params: Promise<{ locale:
   const { locale } = await params;
   const isRtl = locale === 'ar';
 
-  const errorMessages = {
-    ar: 'فشل تحميل العروض. يرجى المحاولة لاحقاً.',
-    en: 'Failed to load offers. Please try again later.',
-    ru: 'Ошибка загрузки предложений. Пожалуйста, попробуйте позже.',
+  const messages = {
+    ar: {
+      title: 'العروض',
+      coming: 'العروض الحصرية قريباً',
+      description: 'نحن نعمل على تجهيز عروض حصرية ومميزة لعملائنا الكرام. يرجى العودة قريباً.',
+    },
+    en: {
+      title: 'Offers',
+      coming: 'Exclusive Offers Coming Soon',
+      description: 'We are preparing exclusive and special offers for our valued clients. Please check back soon.',
+    },
+    ru: {
+      title: 'Предложения',
+      coming: 'Эксклюзивные предложения скоро',
+      description: 'Мы готовим эксклюзивные и специальные предложения для наших уважаемых клиентов. Пожалуйста, проверьте позже.',
+    },
   };
 
-  try {
-    const offers = await api.getOffers();
+  const t = messages[locale as keyof typeof messages] || messages.en;
 
-    return (
-      <div className={`${isRtl ? 'rtl' : 'ltr'}`} dir={isRtl ? 'rtl' : 'ltr'}>
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <h1 className="text-4xl font-bold mb-8">
-            {locale === 'ar' ? 'العروض' : locale === 'en' ? 'Offers' : 'Предложения'}
-          </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {offers.map((offer: any) => (
-              <div key={offer.id} className="bg-white p-6 rounded-lg shadow-lg">
-                <h3 className="text-xl font-bold mb-2">{offer.title}</h3>
-                <p className="text-gray-600">{offer.description}</p>
-              </div>
-            ))}
-          </div>
+  return (
+    <div className={`${isRtl ? 'rtl' : 'ltr'}`} dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <h1 className="text-4xl font-bold mb-8">{t.title}</h1>
+        <div className="bg-blue-50 border-l-4 border-blue-600 p-8 rounded-lg">
+          <h2 className="text-2xl font-bold text-blue-900 mb-4">{t.coming}</h2>
+          <p className="text-blue-800 text-lg">{t.description}</p>
         </div>
       </div>
-    );
-  } catch (error) {
-    return (
-      <div className={`text-center py-12 px-4 ${isRtl ? 'rtl' : 'ltr'}`} dir={isRtl ? 'rtl' : 'ltr'}>
-        <p className="text-red-600 text-lg">
-          {errorMessages[locale as keyof typeof errorMessages] || errorMessages.en}
-        </p>
-      </div>
-    );
-  }
+    </div>
+  );
 }
