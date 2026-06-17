@@ -2,6 +2,8 @@ import { api } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import PropertyCard from '@/components/PropertyCard';
+import FilterPanel from '@/components/FilterPanel';
 
 const labels: Record<string, Record<string, string>> = {
   ar: {
@@ -13,6 +15,7 @@ const labels: Record<string, Record<string, string>> = {
     details: 'التفاصيل',
     contact: 'تواصل معنا',
     back: 'العودة',
+    properties: 'العقارات',
   },
   en: {
     price: 'Price',
@@ -46,11 +49,11 @@ export default async function PropertyPage({
   const t = labels[locale as keyof typeof labels] || labels.en;
 
   try {
-    const property = await api.getPropertyDetails(slug);
+    // Try to fetch as property first
+    const property = await api.getPropertyDetails(slug).catch(() => null);
 
-    if (!property) {
-      notFound();
-    }
+    if (property) {
+      // It's a property detail page - render property view
 
     const priceFormatter = new Intl.NumberFormat(locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US', {
       style: 'currency',
@@ -162,9 +165,58 @@ export default async function PropertyPage({
           </div>
         </section>
       </div>
+      );
+    }
+
+    // Not a property, try as category listing
+    const [propertiesData, cities, categories] = await Promise.all([
+      api.getPropertiesBySlug(slug, { limit: 12 }),
+      api.getCities(),
+      api.getCategories(),
+    ]);
+
+    const properties = propertiesData.properties.data || [];
+    const category = categories.find((c) => c.slug === slug);
+
+    return (
+      <div className={`${isRtl ? 'rtl' : 'ltr'}`} dir={isRtl ? 'rtl' : 'ltr'}>
+        <section className="bg-blue-600 text-white py-8 px-4">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-4xl font-bold mb-2">{category?.name || slug}</h1>
+            <p className="opacity-90">
+              {category?.short ||
+                (locale === 'ar'
+                  ? `عرض ${properties.length} عقار`
+                  : locale === 'en'
+                    ? `Showing ${properties.length} properties`
+                    : `Показано ${properties.length} объектов`)}
+            </p>
+          </div>
+        </section>
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <FilterPanel cities={cities} categories={categories} locale={locale} />
+          {properties.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {properties.map((prop) => (
+                <PropertyCard key={prop.id} property={prop} locale={locale} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">
+                {locale === 'ar'
+                  ? 'لم يتم العثور على عقارات'
+                  : locale === 'en'
+                    ? 'No properties found'
+                    : 'Недвижимость не найдена'}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     );
   } catch (error) {
-    console.error('Failed to load property:', error);
+    console.error('Failed to load:', error);
     notFound();
   }
 }
