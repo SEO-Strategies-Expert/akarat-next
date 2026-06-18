@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  robots: "index, follow",
+  robots: {
+    index: false,
+    follow: false,
+  },
   title: "Akarat Istanbul",
   description: "Real estate platform in Istanbul",
   metadataBase: new URL("https://akarat-next.vercel.app"),

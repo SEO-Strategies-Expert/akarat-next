@@ -31,7 +31,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   return {
-    robots: "index, follow",
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 
