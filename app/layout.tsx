@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  robots: "noindex, follow",  // Temporarily disabled until P0-2 (enum translation) is actually working
+  robots: "index, follow",
   title: "Akarat Istanbul",
   description: "Real estate platform in Istanbul",
   metadataBase: new URL("https://akarat-next.vercel.app"),
