@@ -12,6 +12,7 @@ interface PropertyCardProps {
 
 export default function PropertyCard({ property, locale }: PropertyCardProps) {
   const tStatus = useTranslations('statusTags');
+  const tFeatures = useTranslations('featureTags');
   const tCommon = useTranslations('common');
   const isRtl = locale === 'ar';
   const href = locale === 'ar' ? `/properties/${property.slug}` : `/${locale}/properties/${property.slug}`;
@@ -28,13 +29,22 @@ export default function PropertyCard({ property, locale }: PropertyCardProps) {
     const statusMap: { [key: string]: string } = {
       'جاهزة': 'ready',
       'قيد الانشاء': 'under_construction',
+    };
+    const statusKey = statusMap[statusName] || statusName.toLowerCase().replace(/\s+/g, '_');
+    return tStatus(statusKey);
+  };
+
+  // Translate feature tags from API (e.g., "رخيصة" → "Affordable" in English)
+  const getTranslatedFeature = (featureName: string | undefined) => {
+    if (!featureName) return null;
+    const featureMap: { [key: string]: string } = {
       'رخيصة': 'cheap',
       'فاخرة': 'luxury',
       'بالتقسيط': 'installment',
       'إطلالة بحرية': 'sea_view',
     };
-    const statusKey = statusMap[statusName] || statusName.toLowerCase().replace(/\s+/g, '_');
-    return tStatus(statusKey);
+    const featureKey = featureMap[featureName] || featureName.toLowerCase().replace(/\s+/g, '_');
+    return tFeatures(featureKey);
   };
 
   return (
@@ -63,7 +73,7 @@ export default function PropertyCard({ property, locale }: PropertyCardProps) {
             <div className="flex gap-2 flex-wrap">
               {property.features_data.slice(0, 3).map((feature) => (
                 <span key={feature.id} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                  {feature.name}
+                  {getTranslatedFeature(feature.name)}
                 </span>
               ))}
             </div>

@@ -33,6 +33,12 @@
     "installment": "Рассрочка",
     "sea_view": "Вид на море"
   },
+  "featureTags": {
+    "cheap": "Доступно",
+    "luxury": "Люкс",
+    "installment": "Рассрочка",
+    "sea_view": "Вид на море"
+  },
   "common": {
     "properties": "объектов",
     "property": "объект"

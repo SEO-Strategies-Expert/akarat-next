@@ -33,6 +33,12 @@
     "installment": "بالتقسيط",
     "sea_view": "إطلالة بحرية"
   },
+  "featureTags": {
+    "cheap": "رخيصة",
+    "luxury": "فاخرة",
+    "installment": "بالتقسيط",
+    "sea_view": "إطلالة بحرية"
+  },
   "common": {
     "properties": "عقار",
     "property": "عقار"
