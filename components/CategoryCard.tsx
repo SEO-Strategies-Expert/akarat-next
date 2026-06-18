@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Category } from '@/lib/types';
 
 interface CategoryCardProps {
@@ -13,8 +13,6 @@ interface CategoryCardProps {
 export default function CategoryCard({ category, locale }: CategoryCardProps) {
   const tTypes = useTranslations('propertyTypes');
   const tCommon = useTranslations('common');
-  const contextLocale = useLocale();
-  console.log(`[CategoryCard] contextLocale="${contextLocale}", locale prop="${locale}"`);
   const isRtl = locale === 'ar';
   const href = locale === 'ar' ? `/properties/${category.slug}` : `/${locale}/properties/${category.slug}`;
 
@@ -32,7 +30,7 @@ export default function CategoryCard({ category, locale }: CategoryCardProps) {
           )}
         </div>
         <div className="p-4">
-          <h3 className="font-bold text-gray-800 mb-1">{tTypes('apartments')} / {tTypes(category.slug)}</h3>
+          <h3 className="font-bold text-gray-800 mb-1">{tTypes(category.slug)}</h3>
           <p className="text-xs text-gray-600 line-clamp-2">{category.short}</p>
           <p className="text-sm text-blue-600 font-semibold mt-2">
             {category.properties_count} {tCommon('properties')}

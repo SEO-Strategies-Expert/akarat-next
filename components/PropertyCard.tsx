@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Property } from '@/lib/types';
 
 interface PropertyCardProps {
@@ -13,8 +13,6 @@ interface PropertyCardProps {
 export default function PropertyCard({ property, locale }: PropertyCardProps) {
   const tStatus = useTranslations('statusTags');
   const tCommon = useTranslations('common');
-  const contextLocale = useLocale();
-  console.log(`[PropertyCard] contextLocale="${contextLocale}", locale prop="${locale}"`);
   const isRtl = locale === 'ar';
   const href = locale === 'ar' ? `/properties/${property.slug}` : `/${locale}/properties/${property.slug}`;
 
