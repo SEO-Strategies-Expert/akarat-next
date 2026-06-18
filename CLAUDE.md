@@ -96,3 +96,22 @@ Google Tag Manager عبر `@next/third-parties` (نفس GTM الحالي).
 - اللغات الثلاث تعمل، العربية RTL.
 - كل روابط الإنتاج القديمة لها مقابل (أو 301).
 - نتيجة Lighthouse للـ SEO والأداء جيدة.
+
+## Akarat migration — automated review loop
+
+HANDOFF BUS (shared with the Cowork live reviewer):
+`E:\شركة وصال تك\الشركات\akaratistanbul-auto\ملفات شهر يونيو 2026\akarat-review-loop\loop`
+
+### After EVERY code change touching routing/locale/sitemaps
+Invoke the reviewer before moving on:
+> @parity-reviewer review the change I just made.
+Address PASS/ISSUES before continuing.
+
+### After EVERY deployment (preview or production)
+Write two files to the HANDOFF BUS so the Cowork live reviewer can pick it up automatically:
+1. `deploy-url.txt` — the deployment URL ONLY (single line, no extra text). Overwrite each time.
+2. `cc-status.md` — a short status: what changed this cycle, the deploy URL, Vercel deployment state (must be Ready + Production/Preview), and any open issues. Overwrite each time, and put the current UTC timestamp on the first line as `updated: <ISO8601>`.
+
+Then continue working. The Cowork reviewer polls the bus, runs a live browser parity sweep against `deploy-url.txt`, and writes its findings to `review-latest.md` in the same folder. Read `review-latest.md` at the start of your next cycle and resolve anything it flags.
+
+Never promote to the real domain akaratistanbul.net until a Cowork review reports full parity. Keep akarat-next.vercel.app on noindex.

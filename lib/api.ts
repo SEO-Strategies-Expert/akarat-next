@@ -8,6 +8,8 @@ import {
   FAQsData,
   IndexData,
   Settings,
+  BlogPost,
+  BlogPostsData,
 } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://admin.akaratistanbul.net/api';
@@ -113,5 +115,23 @@ export const api = {
   getIndexData: async () => {
     const res = await fetchAPI<IndexData>('/index', { revalidate: 3600 });
     return res.data;
+  },
+
+  // Blog Posts
+  getBlogPosts: async (locale?: string) => {
+    const res = await fetchAPI<BlogPostsData>('/blogs', {
+      revalidate: 3600,
+      headers: locale ? { 'Accept-Language': locale } : {},
+    });
+    return res.data.blogs;
+  },
+
+  // Single Blog Post
+  getBlogPost: async (slug: string, locale?: string) => {
+    const res = await fetchAPI<{ blog: BlogPost }>(`/blogs/${encodeURIComponent(slug)}`, {
+      revalidate: 3600,
+      headers: locale ? { 'Accept-Language': locale } : {},
+    });
+    return res.data.blog;
   },
 };

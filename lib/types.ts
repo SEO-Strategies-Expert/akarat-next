@@ -154,6 +154,23 @@ export interface IndexData {
   [key: string]: any;
 }
 
+// Blog
+export interface BlogPost {
+  id: number;
+  slug: string;
+  title: string;
+  content: string;
+  excerpt?: string;
+  image?: string;
+  created_at: string;
+  updated_at: string;
+  [key: string]: any;
+}
+
+export interface BlogPostsData {
+  blogs: BlogPost[];
+}
+
 // Offers
 export interface Offer {
   id: number;
