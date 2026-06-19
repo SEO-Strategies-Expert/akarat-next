@@ -5,6 +5,7 @@ const handleI18nRouting = createIntlMiddleware({
   locales: ["ar", "en", "ru"],
   defaultLocale: "ar",
   localePrefix: "as-needed",
+  localeDetection: false,
 });
 
 export default function middleware(request: NextRequest) {
