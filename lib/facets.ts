@@ -2,7 +2,7 @@ import { City } from './types';
 
 // Controlled vocabularies — authoritative from URL inventory doc
 export const TYPES = new Set([
-  'apartments', 'farms', 'hotel-residences', 'offices', 'shops', 'villas',
+  'apartments', 'farms', 'hotel-residences', 'offices', 'pent-houses', 'shops', 'villas',
 ]);
 
 export const FEATURES = new Set([
@@ -46,7 +46,7 @@ export function parseFacets(segments: string[], hasIstanbul: boolean): ParsedFac
     }
   }
 
-  if (segments.length === 0) return { type, city, feature, valid: false };
+  if (segments.length === 0) return { type, city, feature, valid: hasIstanbul };
 
   return { type, city, feature, valid: true };
 }

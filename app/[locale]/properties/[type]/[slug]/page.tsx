@@ -4,6 +4,9 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { siteConfig } from '@/lib/seo';
 
+export const revalidate = 3600;
+export const dynamicParams = true;
+
 type Params = { params: Promise<{ locale: string; type: string; slug: string }> };
 
 const SITE_NAMES = {

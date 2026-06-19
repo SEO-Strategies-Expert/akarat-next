@@ -44,9 +44,25 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!parsed.valid) return { title: 'Not Found' };
 
   const title = buildPageTitle(parsed, true, locale);
+  // Canonical logic derived from live akaratistanbul.net responses:
+  // - type (no district)           → /properties/for-sale/{type}
+  // - type + district (no feature) → /properties/for-sale/{type}
+  // - type + district + feature    → /properties/{district}/for-sale/{type}/{feature}
+  // - district only                → /properties/{district}/for-sale
+  // - district + feature           → /properties/{district}/for-sale (feature dropped)
+  let canonicalPath: string;
+  if (parsed.type && (!parsed.city || !parsed.feature)) {
+    canonicalPath = `/properties/for-sale/${parsed.type}`;
+  } else if (parsed.type && parsed.city && parsed.feature) {
+    canonicalPath = `/properties/${parsed.city}/for-sale/${parsed.type}/${parsed.feature}`;
+  } else if (parsed.city) {
+    canonicalPath = `/properties/${parsed.city}/for-sale`;
+  } else {
+    canonicalPath = `/properties/for-sale`;
+  }
   const canonical = locale === 'ar'
-    ? `${siteConfig.url}/properties/istanbul/for-sale/${facets.join('/')}`
-    : `${siteConfig.url}/${locale}/properties/istanbul/for-sale/${facets.join('/')}`;
+    ? `${siteConfig.url}${canonicalPath}`
+    : `${siteConfig.url}/${locale}${canonicalPath}`;
 
   return {
     title,
