@@ -14,7 +14,9 @@ export default function CategoryCard({ category, locale }: CategoryCardProps) {
   const tTypes = useTranslations('propertyTypes');
   const tCommon = useTranslations('common');
   const isRtl = locale === 'ar';
-  const href = locale === 'ar' ? `/properties/${category.slug}` : `/${locale}/properties/${category.slug}`;
+  const href = locale === 'ar'
+    ? `/properties/for-sale/${category.slug}`
+    : `/${locale}/properties/for-sale/${category.slug}`;
 
   return (
     <Link href={href}>

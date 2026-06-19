@@ -15,7 +15,10 @@ export default function PropertyCard({ property, locale }: PropertyCardProps) {
   const tFeatures = useTranslations('featureTags');
   const tCommon = useTranslations('common');
   const isRtl = locale === 'ar';
-  const href = locale === 'ar' ? `/properties/${property.slug}` : `/${locale}/properties/${property.slug}`;
+  const typeSlug = property.category?.[0]?.slug ?? 'apartments';
+  const href = locale === 'ar'
+    ? `/properties/${typeSlug}/${property.slug}`
+    : `/${locale}/properties/${typeSlug}/${property.slug}`;
 
   const priceFormatter = new Intl.NumberFormat(locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US', {
     style: 'currency',

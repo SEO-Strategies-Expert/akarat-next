@@ -2,6 +2,7 @@ import { api } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { siteConfig } from '@/lib/seo';
 
 type Params = { params: Promise<{ locale: string; type: string; slug: string }> };
 
@@ -44,7 +45,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale, type, slug } = await params;
   const siteName = SITE_NAMES[locale as keyof typeof SITE_NAMES] ?? SITE_NAMES.en;
-  const canonical = locale === 'ar' ? `/properties/${type}/${slug}` : `/${locale}/properties/${type}/${slug}`;
+  const canonical = locale === 'ar'
+    ? `${siteConfig.url}/properties/${type}/${slug}`
+    : `${siteConfig.url}/${locale}/properties/${type}/${slug}`;
 
   try {
     const property = await api.getPropertyDetails(slug);

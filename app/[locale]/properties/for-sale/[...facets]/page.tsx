@@ -3,6 +3,7 @@ import PropertyCard from '@/components/PropertyCard';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { parseFacets, resolveCityId, featureKeyword, buildPageTitle } from '@/lib/facets';
+import { siteConfig } from '@/lib/seo';
 
 type Params = { params: Promise<{ locale: string; facets: string[] }> };
 
@@ -48,8 +49,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const title = buildPageTitle(parsed, false, locale);
   const canonical = locale === 'ar'
-    ? `/properties/for-sale/${facets.join('/')}`
-    : `/${locale}/properties/for-sale/${facets.join('/')}`;
+    ? `${siteConfig.url}/properties/for-sale/${facets.join('/')}`
+    : `${siteConfig.url}/${locale}/properties/for-sale/${facets.join('/')}`;
 
   return {
     title,

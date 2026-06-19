@@ -74,12 +74,16 @@ export default async function HomePage({
   const isRtl = locale === 'ar';
   const t = labels[locale as keyof typeof labels] || labels.en;
 
+  // Authoritative 6-type set — pent-houses is NOT in the old-site inventory
+  const VALID_TYPES = new Set(['apartments', 'farms', 'hotel-residences', 'offices', 'shops', 'villas']);
+
   try {
-    const [propertiesData, categories] = await Promise.all([
+    const [propertiesData, categoriesRaw] = await Promise.all([
       api.getProperties({ limit: 6 }),
       api.getCategories(),
     ]);
 
+    const categories = categoriesRaw.filter((c) => VALID_TYPES.has(c.slug));
     const featured = propertiesData.properties.data?.slice(0, 6) || [];
 
     return (
