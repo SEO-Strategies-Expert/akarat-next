@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { siteConfig } from '@/lib/seo';
 
 type Params = { params: Promise<{ locale: string; slug: string }> };
 
@@ -54,7 +55,9 @@ export const dynamicParams = true;
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale, slug } = await params;
   const siteName = SITE_NAMES[locale as keyof typeof SITE_NAMES] ?? SITE_NAMES.en;
-  const canonical = locale === 'ar' ? `/blogs/${slug}` : `/${locale}/blogs/${slug}`;
+  const canonical = locale === 'ar'
+    ? `${siteConfig.url}/blogs/${slug}`
+    : `${siteConfig.url}/${locale}/blogs/${slug}`;
 
   try {
     const post = await api.getBlogPost(slug, locale);
