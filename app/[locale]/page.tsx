@@ -50,16 +50,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     openGraph: {
       title: titles[locale] || titles.en,
       description: descriptions[locale] || descriptions.en,
-      url: locale === 'ar' ? siteConfig.url : `${siteConfig.url}/${locale}`,
+      url: locale === 'ar' ? `${siteConfig.url}/` : `${siteConfig.url}/${locale}/`,
       type: 'website',
     },
     alternates: {
-      canonical: locale === 'ar' ? siteConfig.url : `${siteConfig.url}/${locale}`,
+      canonical: locale === 'ar' ? `${siteConfig.url}/` : `${siteConfig.url}/${locale}/`,
       languages: {
         ar: `${siteConfig.url}/`,
-        en: `${siteConfig.url}/en`,
-        ru: `${siteConfig.url}/ru`,
-        'x-default': siteConfig.url,
+        en: `${siteConfig.url}/en/`,
+        ru: `${siteConfig.url}/ru/`,
+        'x-default': `${siteConfig.url}/`,
       },
     },
   };
