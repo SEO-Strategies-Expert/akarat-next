@@ -35,7 +35,8 @@ export function parseFacets(segments: string[], hasIstanbul: boolean): ParsedFac
   for (const seg of segments) {
     if (type === null && TYPES.has(seg)) {
       type = seg;
-    } else if (city === null && hasIstanbul && CITIES.has(seg)) {
+    } else if (city === null && feature === null && hasIstanbul && CITIES.has(seg)) {
+      // CITY must precede FEATURE in the ordering TYPE→CITY→FEATURE
       city = seg;
     } else if (feature === null && FEATURES.has(seg)) {
       feature = seg;
