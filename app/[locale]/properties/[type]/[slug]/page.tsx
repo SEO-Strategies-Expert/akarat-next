@@ -1,7 +1,6 @@
 import { api } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
 type Params = { params: Promise<{ locale: string; type: string; slug: string }> };
@@ -86,10 +85,18 @@ export default async function PropertyDetailPage({ params }: Params) {
   try {
     property = await api.getPropertyDetails(slug);
   } catch {
-    notFound();
+    property = null;
   }
 
-  if (!property) notFound();
+  if (!property) {
+    return (
+      <div className={isRtl ? 'rtl' : 'ltr'} dir={isRtl ? 'rtl' : 'ltr'}>
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center text-gray-500">
+          <p>{locale === 'ar' ? 'جارٍ تحديث معلومات العقار…' : locale === 'ru' ? 'Информация обновляется…' : 'Property details coming soon.'}</p>
+        </div>
+      </div>
+    );
+  }
 
   const propertiesHref = locale === 'ar' ? '/properties' : `/${locale}/properties`;
   const formatter = new Intl.NumberFormat(

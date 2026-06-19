@@ -25,12 +25,13 @@ export async function fetchOldSitemapPaths(oldPath: string): Promise<string[]> {
   }
 }
 
+// Blog API (admin.akaratistanbul.net/api/blogs) returns 404 — blogs excluded from
+// sitemap index until the API ships. The /blogs/{slug} pages still return 200 (parity).
 export function sitemapIndexXml(locale: string): string {
   const p = localePrefix(locale);
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    `  <sitemap><loc>${SITE_URL}${p}/sitemap/blogs</loc></sitemap>`,
     `  <sitemap><loc>${SITE_URL}${p}/sitemap/types</loc></sitemap>`,
     `  <sitemap><loc>${SITE_URL}${p}/sitemap/projects</loc></sitemap>`,
     `  <sitemap><loc>${SITE_URL}${p}/sitemap/pages</loc></sitemap>`,
