@@ -1,9 +1,11 @@
 'use client';
 
+const year = new Date().getFullYear();
+
 const labels: Record<string, Record<string, string>> = {
-  ar: { copyright: 'جميع الحقوق محفوظة © 2024 عقارات اسطنبول', followUs: 'تابعنا' },
-  en: { copyright: 'All rights reserved © 2024 Akarat Istanbul', followUs: 'Follow Us' },
-  ru: { copyright: 'Все права защищены © 2024 Акарат Стамбул', followUs: 'Следите за نami' },
+  ar: { copyright: `جميع الحقوق محفوظة © ${year} عقارات اسطنبول`, followUs: 'تابعنا' },
+  en: { copyright: `All rights reserved © ${year} Akarat Istanbul`, followUs: 'Follow Us' },
+  ru: { copyright: `Все права защищены © ${year} Акарат Стамбул`, followUs: 'Следите за нами' },
 };
 
 interface FooterProps {

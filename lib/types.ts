@@ -158,17 +158,47 @@ export interface IndexData {
 export interface BlogPost {
   id: number;
   slug: string;
-  title: string;
-  content: string;
+  language: string;
+  name: string;       // actual title field from API
+  title?: string;     // alias kept for compatibility
+  description: string; // full HTML body
+  content?: string;   // alias kept for compatibility
   excerpt?: string;
   image?: string;
+  meta_title?: string;
+  meta_description?: string;
+  faq_title?: string | null;
+  faq_title_1?: string | null;
+  faq_short?: string | null;
+  category?: any;
   created_at: string;
   updated_at: string;
   [key: string]: any;
 }
 
 export interface BlogPostsData {
-  blogs: BlogPost[];
+  posts: {
+    current_page: number;
+    data: BlogPost[];
+    total: number;
+    last_page: number;
+    [key: string]: any;
+  };
+  cats: any[];
+}
+
+// Property detail extras
+export interface PropertyAddon {
+  id: number;
+  addon_name: string;
+  icon: string;
+}
+
+export interface PropertyImage {
+  id: number;
+  property_id: number;
+  image: string;
+  name: string | null;
 }
 
 // Offers

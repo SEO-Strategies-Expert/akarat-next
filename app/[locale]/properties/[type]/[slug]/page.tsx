@@ -87,9 +87,16 @@ export default async function PropertyDetailPage({ params }: Params) {
   const isRtl = locale === 'ar';
   const t = LABELS[locale as keyof typeof LABELS] ?? LABELS.en;
 
-  let property;
+  let property: any = null;
+  let similarProperties: any[] = [];
+  let categories: any[] = [];
+  let relatedPosts: any[] = [];
+
   try {
-    property = await api.getPropertyDetails(slug);
+    [property, categories] = await Promise.all([
+      api.getPropertyDetailsLocale(slug, locale),
+      api.getCategories(),
+    ]);
   } catch {
     property = null;
   }
@@ -104,11 +111,29 @@ export default async function PropertyDetailPage({ params }: Params) {
     );
   }
 
+  // Fetch similar properties (same type) and related blog posts in parallel
+  try {
+    const [simRes, postsRes] = await Promise.all([
+      api.getPropertiesLocale(locale, { category: type, limit: 4, per_page: 4 }),
+      api.getBlogPosts(locale),
+    ]);
+    similarProperties = (simRes.properties?.data ?? []).filter((p: any) => p.slug !== slug).slice(0, 3);
+    relatedPosts = (postsRes ?? []).slice(0, 3);
+  } catch { /* non-critical */ }
+
   const propertiesHref = locale === 'ar' ? '/properties' : `/${locale}/properties`;
   const formatter = new Intl.NumberFormat(
     locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US',
     { style: 'currency', currency: 'USD', minimumFractionDigits: 0 },
   );
+  const galleryImages: any[] = property.images ?? [];
+  const addons: any[] = property.addons ?? [];
+  const TYPES_LABEL: Record<string, Record<string, string>> = {
+    ar: { apartments: 'الشقق', villas: 'الفلل', farms: 'المزارع', offices: 'المكاتب', shops: 'المحلات', 'hotel-residences': 'الشقق الفندقية', 'pent-houses': 'بنتهاوس' },
+    en: { apartments: 'Apartments', villas: 'Villas', farms: 'Farms', offices: 'Offices', shops: 'Shops', 'hotel-residences': 'Hotel Residences', 'pent-houses': 'Pent Houses' },
+    ru: { apartments: 'Апартаменты', villas: 'Виллы', farms: 'Фермы', offices: 'Офисы', shops: 'Магазины', 'hotel-residences': 'Апарт-отели', 'pent-houses': 'Пентхаусы' },
+  };
+  const typeLabels = TYPES_LABEL[locale] ?? TYPES_LABEL.en;
 
   return (
     <div className={isRtl ? 'rtl' : 'ltr'} dir={isRtl ? 'rtl' : 'ltr'}>
@@ -128,6 +153,16 @@ export default async function PropertyDetailPage({ params }: Params) {
                 <Image src={property.image} alt={property.name} fill className="object-cover" priority />
               )}
             </div>
+            {/* Image gallery thumbnails */}
+            {galleryImages.length > 1 && (
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                {galleryImages.slice(0, 8).map((img: any) => (
+                  <div key={img.id} className="relative h-20 rounded overflow-hidden bg-gray-100">
+                    <Image src={img.image} alt={property.name} fill className="object-cover" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -135,7 +170,11 @@ export default async function PropertyDetailPage({ params }: Params) {
             <div className="space-y-4 mb-6">
               <div>
                 <p className="text-gray-600 text-sm">{t.price}</p>
-                <p className="text-3xl font-bold text-blue-600">{formatter.format(property.price)}</p>
+                <p className="text-3xl font-bold text-blue-600">
+                  {property.price_short
+                    ? `From ${formatter.format(property.price)}`
+                    : formatter.format(property.price)}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600 text-sm">{t.location}</p>
@@ -149,10 +188,26 @@ export default async function PropertyDetailPage({ params }: Params) {
                   </span>
                 </div>
               )}
+              {/* Location addons (highway, metro, etc.) */}
+              {addons.length > 0 && (
+                <div className="flex flex-col gap-1">
+                  {addons.map((a: any) => (
+                    <span key={a.id} className="text-sm text-gray-600 flex items-center gap-2">
+                      <i className={a.icon} aria-hidden="true" />
+                      {a.addon_name}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">
+            <a
+              href={`https://wa.me/905458551690?text=${encodeURIComponent(property.name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition text-center"
+            >
               {t.contact}
-            </button>
+            </a>
           </div>
         </div>
       </section>
@@ -173,7 +228,7 @@ export default async function PropertyDetailPage({ params }: Params) {
               <div>
                 <h3 className="text-xl font-bold mb-4">{t.features}</h3>
                 <div className="space-y-2">
-                  {property.features_data.map((f) => (
+                  {property.features_data.map((f: any) => (
                     <div key={f.id} className="flex items-center bg-blue-50 p-3 rounded">
                       <span className="text-blue-600 mr-3">✓</span>
                       <span className="font-semibold">{f.name}</span>
@@ -186,7 +241,7 @@ export default async function PropertyDetailPage({ params }: Params) {
               <div>
                 <h3 className="text-xl font-bold mb-4">{t.amenities}</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  {property.amenities_data.map((a) => (
+                  {property.amenities_data.map((a: any) => (
                     <div key={a.id} className="bg-gray-50 p-3 rounded text-center">
                       <p className="font-semibold text-sm">{a.name}</p>
                     </div>
@@ -194,6 +249,81 @@ export default async function PropertyDetailPage({ params }: Params) {
                 </div>
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {/* Similar Properties */}
+      {similarProperties.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 py-8 border-t">
+          <h2 className="text-2xl font-bold mb-6">
+            {locale === 'ar' ? 'عقارات مشابهة' : locale === 'ru' ? 'Похожие объекты' : 'Similar Properties'}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {similarProperties.map((p: any) => {
+              const pType = p.category?.[0]?.slug ?? type;
+              const href = locale === 'ar' ? `/properties/${pType}/${p.slug}` : `/${locale}/properties/${pType}/${p.slug}`;
+              return (
+                <Link key={p.id} href={href} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition">
+                  <div className="relative h-40 bg-gray-200">
+                    {p.image && <Image src={p.image} alt={p.name} fill className="object-cover" />}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-800 truncate">{p.name}</h3>
+                    <p className="text-blue-600 font-semibold mt-1">{formatter.format(p.price)}</p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Related Articles */}
+      {relatedPosts.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 py-8 border-t">
+          <h2 className="text-2xl font-bold mb-6">
+            {locale === 'ar' ? 'مقالات تساعدك في القرار' : locale === 'ru' ? 'Полезные статьи' : 'Articles to Help You Decide'}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {relatedPosts.map((post: any) => {
+              const href = locale === 'ar' ? `/blogs/${post.slug}` : `/${locale}/blogs/${post.slug}`;
+              return (
+                <Link key={post.id} href={href} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition">
+                  {post.image && (
+                    <div className="relative h-36 bg-gray-200">
+                      <Image src={post.image} alt={post.name} fill className="object-cover" />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-800 line-clamp-2 text-sm">{post.name}</h3>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Browse by type */}
+      {categories.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 py-8 border-t">
+          <h2 className="text-xl font-bold mb-4">
+            {locale === 'ar' ? 'تصفّح حسب نوع العقار' : locale === 'ru' ? 'Обзор по типу недвижимости' : 'Browse by Property Type'}
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            {categories.filter((c: any) => c.properties_count > 0).map((c: any) => {
+              const href = locale === 'ar' ? `/properties/for-sale/${c.slug}` : `/${locale}/properties/for-sale/${c.slug}`;
+              return (
+                <Link
+                  key={c.id}
+                  href={href}
+                  className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${c.slug === type ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'}`}
+                >
+                  {typeLabels[c.slug] ?? c.name} ({c.properties_count})
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}

@@ -117,21 +117,48 @@ export const api = {
     return res.data;
   },
 
-  // Blog Posts
+  // Blog Posts — real endpoint is /blog (not /blogs)
   getBlogPosts: async (locale?: string) => {
-    const res = await fetchAPI<BlogPostsData>('/blogs', {
+    const res = await fetchAPI<BlogPostsData>('/blog', {
       revalidate: 3600,
       headers: locale ? { 'Accept-Language': locale } : {},
     });
-    return res.data.blogs;
+    return res.data.posts.data;
   },
 
-  // Single Blog Post
+  // Single Blog Post — no single-post endpoint; filter from full list
   getBlogPost: async (slug: string, locale?: string) => {
-    const res = await fetchAPI<{ blog: BlogPost }>(`/blogs/${encodeURIComponent(slug)}`, {
+    const res = await fetchAPI<BlogPostsData>('/blog?per_page=200', {
       revalidate: 3600,
       headers: locale ? { 'Accept-Language': locale } : {},
     });
-    return res.data.blog;
+    const post = res.data.posts.data.find((p) => p.slug === slug) ?? null;
+    if (post) {
+      // Normalise: callers may use .title or .name, .content or .description
+      post.title = post.title ?? post.name;
+      post.content = post.content ?? post.description;
+    }
+    return post;
+  },
+
+  // Properties with locale-aware names
+  getPropertiesLocale: async (locale: string, params?: Record<string, string | number>) => {
+    const searchParams = new URLSearchParams();
+    if (params) Object.entries(params).forEach(([k, v]) => searchParams.append(k, String(v)));
+    const query = searchParams.toString();
+    const res = await fetchAPI<PropertiesData>(
+      `/properties${query ? '?' + query : ''}`,
+      { revalidate: 3600, headers: { 'Accept-Language': locale } },
+    );
+    return res.data;
+  },
+
+  // Property detail with locale
+  getPropertyDetailsLocale: async (slug: string, locale: string) => {
+    const res = await fetchAPI<{ property: Property }>(`/property/${slug}`, {
+      revalidate: 3600,
+      headers: { 'Accept-Language': locale },
+    });
+    return res.data.property;
   },
 };

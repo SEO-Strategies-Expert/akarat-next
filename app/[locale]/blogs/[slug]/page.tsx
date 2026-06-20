@@ -58,20 +58,22 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const canonical = locale === 'ar'
     ? `${siteConfig.url}/blogs/${slug}`
     : `${siteConfig.url}/${locale}/blogs/${slug}`;
+  const ogLocale = locale === 'ar' ? 'ar_SA' : locale === 'ru' ? 'ru_RU' : 'en_US';
 
   try {
     const post = await api.getBlogPost(slug, locale);
     if (!post) return { title: siteName, alternates: { canonical } };
 
-    const title = `${post.title} - ${siteName}`;
+    const title = `${post.meta_title ?? post.name} - ${siteName}`;
     return {
       title,
-      description: post.excerpt ?? post.title,
+      description: post.meta_description ?? post.name,
       openGraph: {
         title,
+        description: post.meta_description ?? post.name,
         url: canonical,
         type: 'article',
-        locale: locale === 'ar' ? 'ar_SA' : locale === 'ru' ? 'ru_RU' : 'en_US',
+        locale: ogLocale,
         images: post.image ? [{ url: post.image, width: 1200, height: 630 }] : undefined,
       },
       alternates: { canonical },
@@ -81,12 +83,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   }
 }
 
-const COMING_SOON = {
-  ar: { heading: 'المقال قادم قريباً', body: 'نعمل على إضافة محتوى المدونة. يُرجى التحقق لاحقاً.' },
-  en: { heading: 'Article Coming Soon', body: 'We are working on adding blog content. Please check back later.' },
-  ru: { heading: 'Статья скоро появится', body: 'Мы работаем над добавлением контента. Проверьте позже.' },
-} as const;
-
 export default async function BlogPostPage({ params }: Params) {
   const { locale, slug } = await params;
   const isRtl = locale === 'ar';
@@ -95,30 +91,15 @@ export default async function BlogPostPage({ params }: Params) {
   try {
     post = await api.getBlogPost(slug, locale);
   } catch {
-    // Blog API not yet available — fall through to placeholder below
+    // fall through to notFound
   }
+
+  if (!post) return notFound();
 
   const blogsHref = locale === 'ar' ? '/blogs' : `/${locale}/blogs`;
-  const backLabel =
-    locale === 'ar' ? 'العودة للمدونة' : locale === 'ru' ? 'Назад в блог' : 'Back to Blog';
-
-  // Placeholder 200 response when API isn't available yet
-  if (!post) {
-    const cs = COMING_SOON[locale as keyof typeof COMING_SOON] ?? COMING_SOON.en;
-    return (
-      <div className={isRtl ? 'rtl' : 'ltr'} dir={isRtl ? 'rtl' : 'ltr'}>
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <Link href={blogsHref} className="text-blue-600 hover:text-blue-800 font-semibold">
-            ← {backLabel}
-          </Link>
-        </div>
-        <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-3xl font-bold mb-4 text-gray-800">{cs.heading}</h1>
-          <p className="text-gray-600">{cs.body}</p>
-        </div>
-      </div>
-    );
-  }
+  const backLabel = locale === 'ar' ? 'العودة للمدونة' : locale === 'ru' ? 'Назад в блог' : 'Back to Blog';
+  const title = post.name ?? post.title ?? slug;
+  const body = post.description ?? post.content ?? '';
 
   return (
     <div className={isRtl ? 'rtl' : 'ltr'} dir={isRtl ? 'rtl' : 'ltr'}>
@@ -131,11 +112,11 @@ export default async function BlogPostPage({ params }: Params) {
       <article className="max-w-4xl mx-auto px-4 py-8">
         {post.image && (
           <div className="relative h-72 w-full rounded-lg overflow-hidden bg-gray-200 mb-8">
-            <Image src={post.image} alt={post.title} fill className="object-cover" priority />
+            <Image src={post.image} alt={title} fill className="object-cover" priority />
           </div>
         )}
 
-        <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+        <h1 className="text-4xl font-bold mb-4">{title}</h1>
 
         {post.created_at && (
           <p className="text-gray-500 text-sm mb-8">
@@ -146,10 +127,16 @@ export default async function BlogPostPage({ params }: Params) {
           </p>
         )}
 
-        <div
-          className="prose prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: body }} />
+
+        {/* FAQ section */}
+        {post.faq_title && post.faq_short && (
+          <div className="mt-12 border-t pt-8">
+            <h2 className="text-2xl font-bold mb-4">{post.faq_title}</h2>
+            {post.faq_title_1 && <h3 className="text-xl font-semibold mb-2">{post.faq_title_1}</h3>}
+            <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: post.faq_short }} />
+          </div>
+        )}
       </article>
     </div>
   );
