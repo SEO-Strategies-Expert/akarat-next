@@ -126,19 +126,24 @@ export const api = {
     return res.data.posts.data;
   },
 
-  // Single Blog Post — no single-post endpoint; filter from full list
+  // Single Blog Post — API ignores per_page (always 12/page); paginate until found
   getBlogPost: async (slug: string, locale?: string) => {
-    const res = await fetchAPI<BlogPostsData>('/blog?per_page=200', {
-      revalidate: 3600,
-      headers: locale ? { 'Accept-Language': locale } : {},
-    });
-    const post = res.data.posts.data.find((p) => p.slug === slug) ?? null;
-    if (post) {
-      // Normalise: callers may use .title or .name, .content or .description
-      post.title = post.title ?? post.name;
-      post.content = post.content ?? post.description;
-    }
-    return post;
+    const headers: Record<string, string> = locale ? { 'Accept-Language': locale } : {};
+    let page = 1;
+    let lastPage = 1;
+    do {
+      const res = await fetchAPI<BlogPostsData>(`/blog?page=${page}`, { revalidate: 3600, headers });
+      const { data: posts, last_page } = res.data.posts;
+      lastPage = last_page;
+      const post = posts.find((p) => p.slug === slug) ?? null;
+      if (post) {
+        post.title = post.title ?? post.name;
+        post.content = post.content ?? post.description;
+        return post;
+      }
+      page++;
+    } while (page <= lastPage);
+    return null;
   },
 
   // Properties with locale-aware names
